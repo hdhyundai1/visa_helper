@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 모바일 앱 라이크(App-like) 메타 태그 추가 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="display" content="standalone">
+    <meta name="theme-color" content="#0f172a">
+    <title>HD현대삼호 비자지원</title>
+    
+    <!-- CSS & Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Flatpickr (고급 날짜 선택기) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+
+    <!-- PDF & Excel Utils -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit/dist/fontkit.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- 분리된 CSS 불러오기 -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body class="text-slate-800 flex flex-col justify-center items-center min-h-screen bg-[#f1f5f9] md:p-6 lg:p-10">
+
+    <div id="app-ui" class="w-full max-w-3xl m-auto bg-white min-h-screen md:min-h-[85vh] shadow-2xl relative flex flex-col md:rounded-3xl overflow-hidden ring-1 ring-slate-900/5">
+        
+        <header class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 sticky top-0 z-10 flex justify-between items-center shadow-lg">
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="goHome()" class="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition flex items-center" title="홈">
+                    <i class="fa-solid fa-house"></i>
+                </button>
+                <select id="lang-selector" onchange="window.changeLanguage(this.value)" class="bg-slate-700 border border-slate-600 text-white text-xs font-bold rounded-lg px-2 py-2 outline-none cursor-pointer">
+                    <option value="kr">🇰🇷 한국어</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="vn">🇻🇳 Tiếng Việt</option>
+                </select>
+            </div>
+            
+            <h1 class="text-sm md:text-base font-extrabold tracking-tight text-slate-200">HD현대삼호 비자지원</h1>
+            
+            <div class="flex gap-2">
+                <button onclick="openDBModal()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-md text-xs font-bold transition flex items-center">
+                    <i class="fa-solid fa-users md:mr-1"></i> <span class="hidden md:inline" data-i18n="btn_db">클라우드 명부</span>
+                </button>
+                <button onclick="openAdminModal()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl shadow-md text-xs font-bold transition flex items-center">
+                    <i class="fa-solid fa-sliders md:mr-1"></i> <span class="hidden md:inline" data-i18n="btn_settings">설정</span>
+                </button>
+            </div>
+        </header>
+
+        <div id="progress-container" class="hidden w-full bg-white border-b border-slate-200 shadow-sm z-10 px-2 py-3 md:py-4">
+            <div class="flex items-center justify-between max-w-md mx-auto relative px-4">
+                <div class="absolute top-1/2 left-8 right-8 h-[3px] bg-slate-200 -translate-y-1/2 z-0 rounded overflow-hidden">
+                    <div class="absolute top-0 left-0 h-full bg-blue-600 rounded transition-all duration-500 ease-out" id="stepper-progress-line" style="width: 0%"></div>
+                </div>
+                
+                <button onclick="navigateStep(1)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-1">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">1</div>
+                </button>
+                <button onclick="navigateStep(2)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">2</div>
+                </button>
+                <button onclick="navigateStep(3)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-3">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">3</div>
+                </button>
+                <button onclick="navigateStep(4)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-4">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">4</div>
+                </button>
+                <button onclick="navigateStep(5)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-5">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">5</div>
+                </button>
+                <button onclick="navigateStep(6)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-6">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">6</div>
+                </button>
+                <button onclick="navigateStep(7)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-7">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">7</div>
+                </button>
+            </div>
+        </div>
+
+        <main class="p-5 md:p-8 flex-1 overflow-y-auto overflow-x-hidden relative flex flex-col">
+            
+            <div id="step-0" class="step-container active relative">
+                <div class="flex flex-col items-center justify-center h-full min-h-[60vh] text-center pt-8 pb-10">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-[1.5rem] flex items-center justify-center mb-6 shadow-xl shadow-blue-500/30 transform rotate-3 hover:rotate-6 transition duration-300">
+                        <i class="fa-solid fa-file-signature text-4xl text-white -rotate-3"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-3 text-slate-800 tracking-tight" data-i18n="home_title">외국인 통합 비자지원 시스템</h2>
+                    <p class="text-sm md:text-base text-slate-500 px-4 leading-relaxed max-w-lg mx-auto mb-10" data-i18n="home_desc">
+                        간단한 정보 입력만으로 출입국 필수 서류가 양식에 맞춰 자동 완성됩니다.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3 w-full max-w-lg mx-auto">
+                        <button onclick="startSingleProcess()" class="flex-1 bg-slate-900 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
+                            <i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> <span data-i18n="home_start">개인 신청(1인 접수)</span>
+                        </button>
+                        <button onclick="startBatchProcess()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
+                            <i class="fa-solid fa-file-excel mr-2"></i> <span data-i18n="home_excel">관리자 신청(다수 접수)</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="absolute bottom-0 right-0 md:-mr-2">
+                    <span class="text-[11px] font-bold text-slate-400/80 tracking-wide">Secure Cloud Protected <i class="fa-solid fa-shield-halved ml-1 text-emerald-500"></i></span>
+                </div>
+            </div>
+
+            <div id="step-1" class="step-container">
+                <div class="mb-6 text-center">
+                    <span class="text-blue-600 font-bold text-sm tracking-wider uppercase" data-i18n="s1_step">Step 1</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s1_title">비자 및 민원 선택</h2>
+                    <p class="text-sm text-slate-500 mt-2" data-i18n="s1_desc">선택하신 내용에 따라 필요한 입력 항목과 증빙 서류가 동적으로 변경됩니다.</p>
+                </div>
+                
+                <div class="card-box">
+                    <div class="card-header text-slate-800"><i class="fa-solid fa-passport text-blue-500 mr-2"></i> <span data-i18n="s1_visa">보유 비자 자격</span></div>
+                    <div class="flex gap-4 mb-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="visaType" value="E-9" checked onchange="window.handleModeChange()" class="custom-radio mr-2"> 
+                            <span class="font-bold">E-9</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="visaType" value="E-7" onchange="window.handleModeChange()" class="custom-radio mr-2"> 
+                            <span class="font-bold">E-7</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <div class="card-header text-slate-800"><i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> <span data-i18n="s1_req">민원 종류 (신청/신고)</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 auto-rows-fr">
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer transition border-slate-200 bg-white h-full relative pr-12">
+                            <input type="radio" name="reqType" value="chk_alien_reg" class="custom-radio mr-3" onchange="window.handleModeChange()"> 
+                            <span class="font-bold text-slate-700 block" data-i18n="req_1">외국인 등록</span>
+                            <button type="button" class="absolute right-4 p-2 text-slate-300 hover:text-blue-500 transition" onclick="window.showDocInfo(event, 'chk_alien_reg')" title="필요 서류 보기">
+                                <i class="fa-solid fa-circle-info text-lg"></i>
+                            </button>
+                        </label>
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer transition border-blue-400 bg-blue-50 ring-1 ring-blue-400 shadow-sm h-full relative pr-12">
+                            <input type="radio" name="reqType" value="chk_extension" checked class="custom-radio mr-3" onchange="window.handleModeChange()"> 
+                            <span class="font-bold text-blue-800 block" data-i18n="req_2">체류기간 연장허가</span>
+                            <button type="button" class="absolute right-4 p-2 text-slate-300 hover:text-blue-500 transition" onclick="window.showDocInfo(event, 'chk_extension')" title="필요 서류 보기">
+                                <i class="fa-solid fa-circle-info text-lg"></i>
+                            </button>
+                        </label>
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer transition border-slate-200 bg-white h-full relative pr-12">
+                            <input type="radio" name="reqType" value="chk_change_work" class="custom-radio mr-3" onchange="window.handleModeChange()"> 
+                            <span class="font-bold text-slate-700 block" data-i18n="req_3">근무처 변경/추가</span>
+                            <button type="button" class="absolute right-4 p-2 text-slate-300 hover:text-blue-500 transition" onclick="window.showDocInfo(event, 'chk_change_work')" title="필요 서류 보기">
+                                <i class="fa-solid fa-circle-info text-lg"></i>
+                            </button>
+                        </label>
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer transition border-slate-200 bg-white h-full relative pr-12">
+                            <input type="radio" name="reqType" value="chk_reentry" class="custom-radio mr-3" onchange="window.handleModeChange()"> 
+                            <span class="font-bold text-slate-700 block" data-i18n="req_4">재입국허가</span>
+                            <button type="button" class="absolute right-4 p-2 text-slate-300 hover:text-blue-500 transition" onclick="window.showDocInfo(event, 'chk_reentry')" title="필요 서류 보기">
+                                <i class="fa-solid fa-circle-info text-lg"></i>
+                            </button>
+                        </label>
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer transition border-slate-200 bg-white h-full relative pr-12">
+                            <input type="radio" name="reqType" value="chk_reissue" class="custom-radio mr-3" onchange="window.handleModeChange()"> 
+                            <span class="font-bold text-slate-700 block" data-i18n="req_5">등록증 재발급</span>
+                            <button type="button" class="absolute right-4 p-2 text-slate-300 hover:text-blue-500 transition" onclick="window.showDocInfo(event, 'chk_reissue')" title="필요 서류 보기">
+                                <i class="fa-solid fa-circle-info text-lg"></i>
+                            </button>
+                        </label>
+                        <label class="flex items-center px-4 py-2 border rounded-xl cursor-pointer transition border-slate-200 bg-white h-full relative pr-12">
+                            <input type="radio" name="reqType" value="chk_change_status" class="custom-radio mr-3" onchange="window.handleModeChange()"> 
+                            <span class="font-bold text-slate-700 whitespace-nowrap mr-3 block" data-i18n="req_6">체류자격 변경</span>
+                            <input type="text" id="val_change_status" class="input-field !py-2 !px-3 text-xs uppercase flex-1 min-w-0" placeholder="예: E-7-4" onclick="document.querySelector('input[value=\'chk_change_status\']').click();">
+                            <button type="button" class="absolute right-4 p-2 text-slate-300 hover:text-blue-500 transition" onclick="window.showDocInfo(event, 'chk_change_status')" title="필요 서류 보기">
+                                <i class="fa-solid fa-circle-info text-lg"></i>
+                            </button>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <button id="btn-next-step1" onclick="proceedFromStep1()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_next_step">다음 단계 진행하기</button>
+                </div>
+            </div>
+
+            <div id="step-excel" class="step-container">
+                <div class="mb-6 text-center">
+                    <span class="text-emerald-600 font-bold text-sm tracking-wider uppercase" data-i18n="s_excel_step">Step 2 (Batch)</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s_excel_title">다수 인원 일괄 처리</h2>
+                </div>
+
+                <div class="card-box border-t-4 border-emerald-500">
+                    <div class="text-center py-6 px-4">
+                        <i class="fa-solid fa-file-excel text-6xl text-emerald-500 mb-6"></i>
+                        <p class="text-sm text-slate-600 mb-8 leading-relaxed" data-i18n="s_excel_desc">
+                            Step 1에서 선택한 <strong class="text-slate-800">기본 설정값</strong> 외에도<br>엑셀 칸을 클릭하면 V 체크 항목들을 목록(드롭다운)에서 선택할 수 있습니다.
+                        </p>
+                        
+                        <button onclick="downloadExcelTemplate()" class="w-full max-w-sm mx-auto py-4 bg-slate-100 text-slate-700 rounded-xl font-bold mb-4 hover:bg-slate-200 transition shadow-sm flex items-center justify-center text-base">
+                            <i class="fa-solid fa-download mr-2"></i> <span data-i18n="btn_excel_down">표준 템플릿 다운로드</span>
+                        </button>
+                        
+                        <label class="block w-full max-w-sm mx-auto py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition cursor-pointer shadow-lg text-base transform hover:-translate-y-0.5 flex items-center justify-center">
+                            <i class="fa-solid fa-upload mr-2"></i> <span data-i18n="btn_excel_up">작성된 엑셀 업로드 (생성 시작)</span>
+                            <input type="file" accept=".xlsx, .xls" class="hidden" onchange="processExcelBatch(this)">
+                        </label>
+                        
+                        <div id="step-excel-progress" class="hidden mt-6 text-sm font-bold text-emerald-600 animate-pulse" data-i18n="msg_excel_prog">수십 명의 PDF를 압축 생성 중입니다. 잠시만 기다려주세요...</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-3">
+                    <button onclick="prevStep(1)" class="w-full bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전 단계로</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="step-container">
+                <div class="mb-6 flex flex-col items-center justify-center text-center gap-4">
+                    <div>
+                        <span class="text-blue-600 font-bold text-sm tracking-wider uppercase" data-i18n="s2_step">Step 2</span>
+                        <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s2_title">외국인 인적사항</h2>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <label class="cursor-pointer text-emerald-600 hover:text-white bg-emerald-50 hover:bg-emerald-600 border border-emerald-200 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
+                            <i class="fa-solid fa-camera mr-1.5"></i> <span data-i18n="btn_camera">사진 촬영</span>
+                            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.runIDOCR(this)">
+                        </label>
+                        <label class="cursor-pointer text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
+                            <i class="fa-solid fa-image mr-1.5"></i> <span data-i18n="btn_gallery">파일 첨부</span>
+                            <input type="file" accept="image/*, application/pdf" class="hidden" onchange="window.runIDOCR(this)">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card-box border-t-4 border-blue-500 relative">
+                    <div id="ocr-loading" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex-col items-center justify-center rounded-xl hidden">
+                        <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-600 mb-3"></i>
+                        <span class="font-bold text-blue-800 animate-pulse text-sm">AI 판독 중...</span>
+                    </div>
+
+                    <div class="card-header text-blue-800"><i class="fa-regular fa-id-card mr-2"></i><span data-i18n="s2_sub1">기본 인적 정보</span></div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="form-label" data-i18n="l_surname">성 (Surname)</label>
+                            <input type="text" id="i_surname" class="input-field uppercase" placeholder="예: BUI">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_givenname">명 (Given Name)</label>
+                            <input type="text" id="i_givenname" class="input-field uppercase" placeholder="예: QUOC TINH">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_dob">생년월일 (YYYY-MM-DD)</label>
+                            <input type="text" id="i_dob" class="input-field datepicker-input" placeholder="예: 1980-08-12">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_gender">성별</label>
+                            <select id="i_gender" class="input-field cursor-pointer">
+                                <option value="M" selected data-i18n="gender_m">남성(M)</option>
+                                <option value="F" data-i18n="gender_f">여성(F)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_nation">국적 (Nationality)</label>
+                            <input type="text" id="i_nation" class="input-field uppercase" placeholder="예: VIETNAM">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_arc">외국인등록번호</label>
+                            <input type="text" id="i_arc" class="input-field" inputmode="numeric" placeholder="예: 800812-5000000">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_pass">여권번호 (Passport No.)</label>
+                            <input type="text" id="i_passport" class="input-field uppercase" placeholder="예: E03861791">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_pass_date">여권 발급일 / 만료일</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="i_pass_issue" class="input-field px-2 text-xs datepicker-input" placeholder="발급 (예: 2020-01-01)">
+                                <input type="text" id="i_pass_exp" class="input-field px-2 text-xs datepicker-input" placeholder="만료 (예: 2030-01-01)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-box bg-slate-50 border-slate-200">
+                    <div class="card-header text-slate-700 border-slate-200"><i class="fa-solid fa-file-pen mr-2"></i><span data-i18n="s2_sub2">신청서 제출자</span></div>
+                    
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="submitter" value="self" checked onchange="window.handleModeChange()" class="custom-radio mr-2"> 
+                            <span class="text-sm font-bold" data-i18n="sub_self">본인 직접 제출</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="submitter" value="spouse" onchange="window.handleModeChange()" class="custom-radio mr-2"> 
+                            <span class="text-sm font-bold text-slate-600" data-i18n="sub_spouse">배우자 (대리)</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="submitter" value="parents" onchange="window.handleModeChange()" class="custom-radio mr-2"> 
+                            <span class="text-sm font-bold text-slate-600" data-i18n="sub_parents">부/모 (대리)</span>
+                        </label>
+                    </div>
+                    
+                    <div id="wrap_family_proxy" class="grid grid-cols-1 sm:grid-cols-2 gap-4 hidden dynamic-wrap pt-2 border-t border-slate-200 mt-2">
+                        <div id="wrap_spouse" class="hidden w-full sm:col-span-2">
+                            <label class="form-label text-blue-700" data-i18n="l_spouse">배우자 성명 영문</label>
+                            <input type="text" id="i_spouse" class="input-field uppercase" placeholder="예: NGUYEN THI B">
+                        </div>
+                        <div id="wrap_parents" class="hidden w-full sm:col-span-2">
+                            <label class="form-label text-blue-700" data-i18n="l_parents">부/모 성명 영문</label>
+                            <input type="text" id="i_parents" class="input-field uppercase" placeholder="예: NGUYEN VAN C">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex gap-3">
+                    <button onclick="prevStep(1)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.saveToEmployeeDB(); nextStep(3);" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition" data-i18n="btn_next">다음 단계</button>
+                </div>
+            </div>
+
+            <div id="step-3" class="step-container">
+                <div class="mb-6 text-center">
+                    <span class="text-blue-600 font-bold text-sm tracking-wider uppercase" data-i18n="s3_step">Step 3</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s3_title">주소 및 연락처</h2>
+                </div>
+                
+                <div class="card-box border-t-4 border-indigo-500">
+                    <div class="card-header text-indigo-800"><i class="fa-solid fa-map-location-dot mr-2"></i><span data-i18n="s3_sub1">대한민국 체류지 정보</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="form-label" data-i18n="l_addr_kr">현재 대한민국 내 주소</label>
+                            <input type="text" id="i_address_kr" class="input-field" placeholder="예: 전라남도 영암군 삼호읍 대불로 OO, OO아파트 OO동 OO호">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_cell">휴대전화번호</label>
+                            <input type="tel" id="i_cellphone" class="input-field" placeholder="예: 010-0000-0000">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_tel">일반 전화번호 (선택)</label>
+                            <input type="tel" id="i_phone" class="input-field" placeholder="예: 061-000-0000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-box border-t-4 border-slate-300 bg-slate-50">
+                    <div class="card-header text-slate-600"><i class="fa-solid fa-plane-departure mr-2"></i><span data-i18n="s3_sub2">본국 (Home Country) 정보</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="form-label" data-i18n="l_addr_home">본국 주소 (Home Address)</label>
+                            <input type="text" id="i_address_home" class="input-field uppercase" placeholder="예: SON HA, THAI THUY, THAI BINH">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_home_tel">본국 전화번호</label>
+                            <input type="tel" id="i_home_phone" class="input-field" placeholder="예: +84 00-000-0000">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_email">전자우편 (E-mail)</label>
+                            <input type="email" id="i_email" class="input-field uppercase" placeholder="예: example@email.com">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex gap-3">
+                    <button onclick="prevStep(2)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.saveToEmployeeDB(); nextStep(4);" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition" data-i18n="btn_next">다음 단계</button>
+                </div>
+            </div>
+
+            <div id="step-4" class="step-container">
+                <div class="mb-6 text-center">
+                    <span class="text-blue-600 font-bold text-sm tracking-wider uppercase" data-i18n="s4_step">Step 4</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s4_title">근무처 및 거주 정보</h2>
+                </div>
+                
+                <div class="card-box border-t-4 border-blue-600">
+                    <div class="card-header text-blue-900"><i class="fa-solid fa-building mr-2"></i><span data-i18n="s4_sub1">원 근무처 정보</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="sm:col-span-2 lg:col-span-2">
+                            <label class="form-label" data-i18n="l_cname">근무처 명칭</label>
+                            <input type="text" id="i_cname" class="input-field" placeholder="예: 에이치디현대삼호 주식회사">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_cregno">사업자등록번호</label>
+                            <input type="text" id="i_cregno" class="input-field font-mono" placeholder="예: 411-81-19799">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_rep_name">대표자 성명</label>
+                            <input type="text" id="i_rep_name" class="input-field" placeholder="예: 김재을">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_rep_id">대표자 주민번호</label>
+                            <input type="text" id="i_rep_id" class="input-field font-mono" placeholder="13자리 숫자 (자동 하이픈)">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_rep_gender">대표자 성별</label>
+                            <select id="i_rep_gender" class="input-field cursor-pointer">
+                                <option value="M" data-i18n="gender_m">남성</option>
+                                <option value="F" data-i18n="gender_f">여성</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="form-label" data-i18n="l_caddr">회사 주소</label>
+                            <input type="text" id="i_caddr" class="input-field" placeholder="예: 전라남도 영암군 삼호읍 대불로 93">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_cphone">회사 전화번호</label>
+                            <input type="tel" id="i_cphone" class="input-field font-mono" placeholder="예: 061-460-2114">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="wrap_new_workplace" class="dynamic-wrap card-box border-t-4 border-amber-500 bg-amber-50/30 hidden">
+                    <div class="card-header text-amber-800"><i class="fa-solid fa-building-circle-arrow-right mr-2"></i><span data-i18n="s4_sub2">예정 근무처 정보</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="form-label" data-i18n="l_new_cname">예정 근무처 명칭</label>
+                            <input type="text" id="i_new_cname" class="input-field bg-white" placeholder="예: 변경될 회사 이름">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_new_cregno">사업자등록번호</label>
+                            <input type="text" id="i_new_cregno" class="input-field bg-white font-mono" placeholder="예: 000-00-00000">
+                        </div>
+                        <div class="sm:col-span-2 md:col-span-3">
+                            <label class="form-label" data-i18n="l_new_cphone">전화번호</label>
+                            <input type="tel" id="i_new_cphone" class="input-field bg-white font-mono max-w-xs" placeholder="예: 061-000-0000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="wrap_dorm" class="dynamic-wrap card-box border-t-4 border-emerald-500 bg-emerald-50/30 hidden">
+                    <div class="card-header text-emerald-800"><i class="fa-solid fa-house-chimney-user mr-2"></i><span data-i18n="s4_sub3">거주/숙소 제공 정보</span></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="form-label mb-2" data-i18n="l_dorm_own">숙소 소유 형태</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center cursor-pointer text-sm">
+                                    <input type="radio" name="r_own" value="own_self" checked class="custom-radio mr-2"> <span data-i18n="own_1">자가</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer text-sm">
+                                    <input type="radio" name="r_own" value="own_rent" class="custom-radio mr-2"> <span data-i18n="own_2">임대</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer text-sm">
+                                    <input type="radio" name="r_own" value="own_other" class="custom-radio mr-2"> <span data-i18n="own_3">기타</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label mb-2" data-i18n="l_dorm_type">숙소 주거 형태</label>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="flex items-center cursor-pointer text-sm">
+                                    <input type="radio" name="r_type" value="type_dorm" checked class="custom-radio mr-2"> <span data-i18n="type_1">기숙사</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer text-sm">
+                                    <input type="radio" name="r_type" value="type_private" class="custom-radio mr-2"> <span data-i18n="type_2">개인주택</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer text-sm">
+                                    <input type="radio" name="r_type" value="type_hotel" class="custom-radio mr-2"> <span data-i18n="type_3">숙박시설</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="form-label" data-i18n="l_dorm_start">제공 시작일 (입주일)</label>
+                            <input type="text" id="i_dorm_start" class="input-field bg-white max-w-[200px] datepicker-input" placeholder="예: 2024-05-18">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-box border-t-4 border-slate-300">
+                    <div class="card-header text-slate-700"><i class="fa-solid fa-clipboard-list mr-2"></i><span data-i18n="s4_sub4">기타 신고 정보</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label" data-i18n="l_job">근로자 직업</label>
+                            <input type="text" id="i_job" class="input-field" placeholder="예: 조선용접공, 발판공, 취부사 등">
+                        </div>
+                        <div>
+                            <label class="form-label" data-i18n="l_income">연소득 (단위: 만원)</label>
+                            <div class="relative">
+                                <input type="text" id="i_income" class="input-field pr-12 text-right font-mono money-format" placeholder="예: 3,000">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-bold">만원</span>
+                            </div>
+                        </div>
+                        
+                        <div id="wrap_reentry_period" class="dynamic-wrap hidden sm:col-span-2">
+                            <label class="form-label text-purple-700" data-i18n="l_reentry">재입국 신청 기간</label>
+                            <input type="text" id="i_reentry_period" class="input-field bg-purple-50/30" placeholder="예: 1년">
+                        </div>
+                        
+                        <div id="wrap_refund_acc" class="dynamic-wrap hidden sm:col-span-2 mt-2">
+                            <label class="form-label text-teal-700" data-i18n="l_refund">수수료 환급 계좌</label>
+                            <div class="flex shadow-sm rounded-xl overflow-hidden border border-teal-200">
+                                <input type="text" id="i_refund_bank" class="w-1/3 px-4 py-3 text-sm bg-teal-50 border-r border-teal-200 outline-none" placeholder="은행명 (예: 우리은행)">
+                                <input type="text" id="i_refund_acc" class="w-2/3 px-4 py-3 text-sm outline-none font-mono" placeholder="계좌번호 (하이픈 없이)">
+                            </div>
+                        </div>
+                        
+                        <div id="wrap_guar_period" class="dynamic-wrap hidden sm:col-span-2 mt-2 border-t border-slate-100 pt-3">
+                            <label class="form-label text-indigo-700" data-i18n="l_guar_date">신원보증 기간 (From - To)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="i_guar_start" class="input-field bg-indigo-50/30 datepicker-input" placeholder="시작일 (예: 2024-05-18)">
+                                <span class="font-bold text-slate-400">~</span>
+                                <input type="text" id="i_guar_end" class="input-field bg-indigo-50/30 datepicker-input" placeholder="종료일 (예: 2026-05-17)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex gap-3">
+                    <button onclick="prevStep(3)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.saveToEmployeeDB(); nextStep(5);" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center transition text-base">
+                        <i class="fa-solid fa-robot text-yellow-400 mr-2"></i> <span data-i18n="btn_to_ai">AI 검증 단계로</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-5" class="step-container">
+                <div class="mb-6 flex flex-col items-center justify-center text-center">
+                    <div>
+                        <span class="text-indigo-500 font-bold text-sm tracking-wider uppercase" data-i18n="s5_step">Step 5</span>
+                        <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s5_title">AI 서류 정밀 검증</h2>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl mb-6 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-xl font-bold flex items-center">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-400"></i> 
+                                <span data-i18n="s5_sub1">AI 증빙서류 교차 검증</span>
+                            </h3>
+                            <span class="bg-indigo-500/50 text-indigo-100 text-xs px-2.5 py-1 rounded-full border border-indigo-400/30" data-i18n="s5_badge">동적 매핑 활성화</span>
+                        </div>
+                        <p class="text-sm text-indigo-200 mb-6" data-i18n="s5_desc">증빙서류를 여러 번 나누어 촬영/업로드하셔도 AI가 하나로 취합하여 정밀 대조합니다.</p>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <label class="flex flex-col items-center justify-center bg-white/10 hover:bg-white/20 border-2 border-indigo-400/50 border-dashed rounded-2xl py-6 cursor-pointer transition-all">
+                                <i class="fa-solid fa-camera text-3xl mb-2 text-indigo-300"></i>
+                                <span class="text-sm font-bold text-white" data-i18n="s5_btn_camera">문서 직접 촬영</span>
+                                <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.previewFiles(this)">
+                            </label>
+                            <label class="flex flex-col items-center justify-center bg-white/10 hover:bg-white/20 border-2 border-indigo-400/50 border-dashed rounded-2xl py-6 cursor-pointer transition-all">
+                                <i class="fa-solid fa-images text-3xl mb-2 text-indigo-300"></i>
+                                <span class="text-sm font-bold text-white" data-i18n="s5_btn_gallery">갤러리 / PDF</span>
+                                <input type="file" multiple accept="image/*, application/pdf" class="hidden" onchange="window.previewFiles(this)">
+                            </label>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm font-bold text-indigo-200">첨부된 증빙 서류</span>
+                            <button onclick="window.clearPreviewFiles()" class="text-xs text-rose-300 hover:text-rose-400 bg-rose-500/20 hover:bg-rose-500/40 px-2 py-1 rounded transition">
+                                <i class="fa-solid fa-trash-can mr-1"></i>전체 삭제
+                            </button>
+                        </div>
+                        <div id="file-preview-container" class="flex gap-3 mt-2 overflow-x-auto pb-2 scrollbar-hide min-h-[4.5rem]"></div>
+                    </div>
+                </div>
+                
+                <div id="ai-result-box" class="hidden rounded-2xl p-5 mb-6 text-sm transition-all shadow-md"></div>
+                
+                <div class="flex flex-col gap-3">
+                    <button id="btn-run-ai" onclick="window.runAIVerification()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all text-lg flex justify-center items-center">
+                        <i class="fa-solid fa-magnifying-glass-chart mr-2"></i> <span id="btn_verify_text" data-i18n="btn_verify">서류 교차 검증 시작</span>
+                    </button>
+                    <div class="flex gap-3 mt-2">
+                        <button onclick="prevStep(4)" class="w-1/4 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-3.5 rounded-xl transition text-sm sm:text-base">
+                            <span data-i18n="btn_prev">이전</span>
+                        </button>
+                        <button onclick="editInfo()" class="w-1/4 bg-rose-50 border-2 border-rose-200 text-rose-600 hover:bg-rose-100 font-bold py-3.5 rounded-xl transition flex items-center justify-center text-sm sm:text-base">
+                            <i class="fa-solid fa-pen sm:mr-1"></i><span class="hidden sm:inline" data-i18n="btn_edit">입력 수정</span>
+                        </button>
+                        <button onclick="window.prepareGenerate()" class="w-2/4 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow flex items-center justify-center transition text-sm sm:text-base">
+                            <span data-i18n="btn_skip">건너뛰고 서류 생성</span> <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step-6" class="step-container">
+                <div class="mb-6 flex flex-col items-center justify-center text-center">
+                    <span class="text-emerald-600 font-bold text-sm tracking-wider uppercase" data-i18n="s6_step">Step 6</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1 flex items-center justify-center"><i class="fa-solid fa-print text-emerald-500 mr-2"></i><span data-i18n="s6_title">최종 서류 생성</span></h2>
+                    <p class="text-sm text-slate-500 mt-2" data-i18n="s6_desc">입력하신 정보 기반으로 완성된 서류를 확인하고 다운로드하세요.</p>
+                </div>
+                    
+                <div class="w-full card-box text-left !p-6">
+                    <div class="card-header text-slate-800"><i class="fa-solid fa-copy text-blue-500 mr-2"></i><span data-i18n="s6_sub1">생성할 문서 선택</span></div>
+                    <div class="space-y-4 text-sm">
+                        <label class="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition has-[:checked]:bg-blue-50 has-[:checked]:border-blue-300">
+                            <input type="checkbox" id="gen_main" class="w-5 h-5 custom-radio mr-3" onchange="window.saveFormData()"> 
+                            <span class="font-bold text-slate-800" data-i18n="doc_1">통합신청서 (별지 제34호)</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition has-[:checked]:bg-emerald-50 has-[:checked]:border-emerald-300">
+                            <input type="checkbox" id="gen_residence" class="w-5 h-5 custom-radio mr-3 !accent-emerald-600" onchange="window.saveFormData()"> 
+                            <span class="font-bold text-slate-800" data-i18n="doc_2">거주/숙소제공 확인서</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-300">
+                            <input type="checkbox" id="gen_guarantee" class="w-5 h-5 custom-radio mr-3 !accent-indigo-600" onchange="window.saveFormData()"> 
+                            <span class="font-bold text-slate-800" data-i18n="doc_3">신원보증서 (별지 제129호)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex flex-col gap-3">
+                    <div class="flex gap-3">
+                        <button onclick="prevStep(5)" class="w-1/3 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전</button>
+                        <button id="btn-generate-all" onclick="window.generateSelectedPDFs()" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base flex justify-center items-center">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-300"></i> <span data-i18n="btn_generate">선택된 서류 일괄 생성</span>
+                        </button>
+                    </div>
+                    <button onclick="window.renderChecklist(); nextStep(7);" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_to_step7">다음 단계 (최종 제출 점검)</button>
+                </div>
+                
+                <div id="download-zone" class="hidden w-full flex flex-col gap-3 mt-6"></div>
+            </div>
+
+            <div id="step-7" class="step-container">
+                <div class="mb-6 flex flex-col items-center justify-center text-center">
+                    <span class="text-rose-500 font-bold text-sm tracking-wider uppercase" data-i18n="s7_step">Step 7</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s7_title">최종 준비 서류 점검</h2>
+                    <p class="text-sm text-slate-500 mt-2" data-i18n="s7_desc">해당 민원에 필요한 모든 서류가 준비되었는지 확인해 주세요.</p>
+                </div>
+                
+                <div id="checklist-container" class="card-box bg-slate-50/50">
+                    <!-- 체크리스트 항목이 동적으로 생성됩니다 -->
+                </div>
+
+                <div id="final-success-msg" class="hidden bg-emerald-50 border-2 border-emerald-500 rounded-3xl p-6 md:p-8 text-center shadow-lg animate-pulse mb-6">
+                    <i class="fa-solid fa-circle-check text-5xl text-emerald-500 mb-4"></i>
+                    <h3 class="text-xl font-extrabold text-emerald-800 mb-2" data-i18n="s7_success_title">모든 서류 준비 완료!</h3>
+                    <p class="text-sm md:text-base text-emerald-600 font-bold" data-i18n="s7_success_desc">모든 서류가 꼼꼼하게 준비되었습니다.<br>관할 출입국·외국인관서에 방문하시거나 하이코리아(온라인)를 통해 신청을 완료해 주시기 바랍니다.</p>
+                </div>
+
+                <div class="mt-4 flex gap-3">
+                    <button onclick="prevStep(6)" class="w-1/3 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전</button>
+                    <button onclick="goHome()" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_home">처음으로 돌아가기</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 모달들 -->
+    <div id="db-modal" class="modal z-[160]">
+        <div class="bg-white p-6 rounded-3xl w-11/12 max-w-lg shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center"><i class="fa-solid fa-cloud text-blue-600 mr-2"></i><span data-i18n="btn_db">클라우드 명부</span></h3>
+                <button onclick="closeDBModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-xs text-slate-500 mb-4 bg-slate-50 p-2 rounded border border-slate-100">
+                <i class="fa-solid fa-lock text-emerald-500 mr-1"></i> 데이터가 클라우드(Firestore)에 안전하게 암호화되어 저장됩니다.
+            </p>
+            <input type="text" id="db-search" oninput="window.renderDBList()" class="input-field mb-4" placeholder="이름 검색">
+            <div class="flex-1 overflow-y-auto mb-4 border rounded-xl">
+                <ul id="db-list" class="divide-y divide-slate-100"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="excel-modal" class="modal z-[160]">
+        <div class="bg-white p-6 rounded-3xl w-11/12 max-w-sm shadow-2xl text-center">
+            <i class="fa-solid fa-file-excel text-5xl text-emerald-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-slate-800 mb-2" data-i18n="home_excel">관리자 신청(다수 접수)</h3>
+            <p class="text-xs text-slate-500 mb-6">엑셀 템플릿의 칸을 클릭하면 항목을 선택할 수 있습니다.<br>명단을 입력한 뒤 업로드하면 수십 장의 PDF가 ZIP으로 생성됩니다.</p>
+            
+            <button onclick="window.downloadExcelTemplate()" class="w-full py-3 bg-slate-100 text-slate-700 rounded-xl font-bold mb-3 hover:bg-slate-200 transition text-sm">
+                <i class="fa-solid fa-download mr-1"></i> <span data-i18n="btn_excel_down">표준 템플릿 다운로드</span>
+            </button>
+            
+            <label class="block w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition cursor-pointer shadow-md text-sm">
+                <i class="fa-solid fa-upload mr-1"></i> <span data-i18n="btn_excel_up">작성된 엑셀 업로드 (생성 시작)</span>
+                <input type="file" accept=".xlsx, .xls" class="hidden" onchange="window.processExcelBatch(this)">
+            </label>
+            <div id="step-excel-progress" class="hidden mt-4 text-xs font-bold text-emerald-600 animate-pulse" data-i18n="msg_excel_prog">수십 명의 PDF를 압축 생성 중입니다...</div>
+            <button onclick="closeExcelModal()" class="mt-4 text-slate-400 text-xs underline">닫기</button>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal z-[150]">
+        <div class="bg-white p-6 rounded-3xl w-11/12 max-w-sm shadow-2xl">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center"><i class="fa-solid fa-folder-gear text-blue-600 mr-2"></i><span data-i18n="btn_settings">설정</span></h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-5 pb-3 border-b border-slate-100">각 서류의 빈 PDF 양식을 기기에 등록합니다.</p>
+            
+            <div class="space-y-3 mb-6">
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                        <div class="font-bold text-sm text-slate-800" data-i18n="doc_1">통합신청서 (별지 제34호)</div>
+                        <div id="status-main" class="text-[11px] text-rose-500 font-bold mt-1">미등록</div>
+                    </div>
+                    <input type="file" id="file-main" class="hidden" accept="application/pdf" onchange="window.uploadSpecificTemplate('main', this)">
+                    <label for="file-main" class="bg-white border-2 border-blue-600 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer hover:bg-blue-50">등록</label>
+                </div>
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                        <div class="font-bold text-sm text-slate-800" data-i18n="doc_2">거주/숙소제공 확인서</div>
+                        <div id="status-residence" class="text-[11px] text-rose-500 font-bold mt-1">미등록</div>
+                    </div>
+                    <input type="file" id="file-residence" class="hidden" accept="application/pdf" onchange="window.uploadSpecificTemplate('residence', this)">
+                    <label for="file-residence" class="bg-white border-2 border-emerald-600 text-emerald-600 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer hover:bg-emerald-50">등록</label>
+                </div>
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                        <div class="font-bold text-sm text-slate-800" data-i18n="doc_3">신원보증서 (별지 제129호)</div>
+                        <div id="status-guarantee" class="text-[11px] text-rose-500 font-bold mt-1">미등록</div>
+                    </div>
+                    <input type="file" id="file-guarantee" class="hidden" accept="application/pdf" onchange="window.uploadSpecificTemplate('guarantee', this)">
+                    <label for="file-guarantee" class="bg-white border-2 border-indigo-600 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer hover:bg-indigo-50">등록</label>
+                </div>
+            </div>
+            <button onclick="closeAdminModal()" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold shadow-lg">설정 완료</button>
+        </div>
+    </div>
+
+    <div id="msg-modal" class="modal z-[200]">
+        <div class="bg-white p-7 rounded-3xl w-10/12 max-w-xs shadow-2xl text-center">
+            <div id="msg-icon" class="mb-4"></div>
+            <h3 id="msg-title" class="text-xl font-extrabold mb-2 text-slate-800">알림</h3>
+            <p id="msg-desc" class="text-sm text-slate-500 mb-6 whitespace-pre-wrap"></p>
+            <button onclick="closeMsg()" class="w-full py-3.5 bg-blue-600 text-white rounded-xl font-bold">확인</button>
+        </div>
+    </div>
+    
+    <div id="confirm-modal" class="modal z-[200]">
+        <div class="bg-white p-7 rounded-3xl w-10/12 max-w-xs shadow-2xl text-center">
+            <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">
+                <i class="fa-solid fa-circle-question text-3xl"></i>
+            </div>
+            <h3 id="confirm-title" class="text-xl font-extrabold mb-2 text-slate-800">확인</h3>
+            <p id="confirm-desc" class="text-sm text-slate-500 mb-6 whitespace-pre-wrap"></p>
+            <div class="flex gap-3">
+                <button onclick="window.closeConfirm()" class="w-1/2 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200">취소</button>
+                <button id="confirm-ok-btn" onclick="window.confirmOk()" class="w-1/2 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="doc-info-modal" class="modal z-[170]">
+        <div class="bg-white p-6 rounded-3xl w-11/12 max-w-md shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-folder-open text-blue-600 mr-2"></i>민원별 필요 서류 안내
+                </h3>
+                <button onclick="window.closeDocInfo()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="doc-info-content" class="flex-1 overflow-y-auto pr-1 space-y-2"></div>
+            <button onclick="window.closeDocInfo()" class="mt-5 w-full py-3.5 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition">확인했습니다</button>
+        </div>
+    </div>
+
+    <!-- 통합된 모듈 스크립트 불러오기 -->
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>
