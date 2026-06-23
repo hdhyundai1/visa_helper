@@ -1,6 +1,6 @@
 import { fetchWithBackoff } from './utils.js';
 import { showMsg, clearHighlights } from './ui.js';
-import { i18nDict } from './config.js';
+import { i18nDict, CONFIG } from './config.js';
 
 export async function runIDOCR(inputEl) {
     if (inputEl.files.length === 0) return;
@@ -36,7 +36,7 @@ export async function runIDOCR(inputEl) {
             generationConfig: { responseMimeType: "application/json" }
         };
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${window.apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${CONFIG.apiKey}`;
         
         const result = await fetchWithBackoff(apiUrl, payload);
         
@@ -216,7 +216,7 @@ ${JSON.stringify(formData, null, 2)}
             }
         };
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${window.apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${CONFIG.apiKey}`;
         
         const result = await fetchWithBackoff(apiUrl, payload);
         if (result.error) throw new Error(result.error.message);
