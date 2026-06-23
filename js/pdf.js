@@ -1,5 +1,5 @@
 import { docMatrix, i18nDict } from './config.js';
-import { showMsg, updateTemplateStatusUI as uiUpdateTemplate } from './ui.js';
+import { showMsg } from './ui.js';
 import { base64ToArrayBuffer } from './utils.js';
 
 const PDF_COORDS_MAIN = {
@@ -541,3 +541,256 @@ export function checkFinalSuccess() {
         msgBox.classList.add('hidden');
     }
 }
+
+}
+
+{
+type: uploaded file
+fileName: hdhyundai1/visa_helper/visa_helper-main/js/ui.js
+fullContent:
+import { i18nDict, docMatrix, reqNames } from './config.js';
+
+export let confirmAction = null;
+
+export function changeLanguage(lang) {
+    window.currentLang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nDict[lang] && i18nDict[lang][key]) {
+            el.innerHTML = i18nDict[lang][key];
+        }
+    });
+    
+    if (window.isBatchMode) {
+        document.getElementById('btn-next-step1').innerHTML = i18nDict[lang]['btn_to_excel'];
+    } else {
+        document.getElementById('btn-next-step1').innerHTML = i18nDict[lang]['btn_next_step'];
+    }
+    
+    const aiBtn = document.getElementById('btn_verify_text');
+    if (aiBtn) {
+        aiBtn.innerHTML = i18nDict[lang]['btn_verify'];
+    }
+
+    document.querySelectorAll('.doc-name-label').forEach(el => {
+        const newName = el.getAttribute(`data-${lang}`);
+        if (newName) el.innerHTML = newName;
+    });
+
+    document.querySelectorAll('.badge-auto').forEach(el => el.innerHTML = i18nDict[lang]['badge_auto']);
+    document.querySelectorAll('.badge-company').forEach(el => el.innerHTML = i18nDict[lang]['badge_company']);
+    document.querySelectorAll('.badge-personal').forEach(el => el.innerHTML = i18nDict[lang]['badge_personal']);
+}
+
+export function openDBModal() { 
+    document.getElementById('db-modal').classList.add('active'); 
+    if(window.renderDBList) window.renderDBList(); 
+}
+
+export function closeDBModal() { 
+    document.getElementById('db-modal').classList.remove('active'); 
+}
+
+export function openAdminModal() { 
+    document.getElementById('admin-modal').classList.add('active'); 
+    if(window.updateTemplateStatusUI) window.updateTemplateStatusUI(); 
+}
+
+export function closeAdminModal() { 
+    document.getElementById('admin-modal').classList.remove('active'); 
+}
+
+export function closeExcelModal() {
+    document.getElementById('excel-modal').classList.remove('active');
+}
+
+export function showConfirm(title, desc, actionFn) { 
+    document.getElementById('confirm-title').innerText = title; 
+    document.getElementById('confirm-desc').innerText = desc; 
+    confirmAction = actionFn; 
+    document.getElementById('confirm-modal').classList.add('active'); 
+}
+
+export function closeConfirm() { 
+    document.getElementById('confirm-modal').classList.remove('active'); 
+    confirmAction = null; 
+}
+
+export function confirmOk() {
+    if (confirmAction) confirmAction();
+    closeConfirm();
+}
+
+export function showMsg(title, desc, type='info') {
+    const iconWrap = document.getElementById('msg-icon');
+    if (type === 'info') {
+        iconWrap.innerHTML = '<div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto text-blue-500"><i class="fa-solid fa-circle-info text-3xl"></i></div>';
+    } else if (type === 'error') {
+        iconWrap.innerHTML = '<div class="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto text-rose-500"><i class="fa-solid fa-triangle-exclamation text-3xl"></i></div>';
+    } else if (type === 'success') {
+        iconWrap.innerHTML = '<div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-500"><i class="fa-solid fa-circle-check text-3xl"></i></div>';
+    }
+    
+    document.getElementById('msg-title').innerText = title; 
+    document.getElementById('msg-desc').innerHTML = desc; 
+    document.getElementById('msg-modal').classList.add('active');
+}
+
+export function closeMsg() { 
+    document.getElementById('msg-modal').classList.remove('active'); 
+}
+
+export function clearHighlights() {
+    document.querySelectorAll('.error-highlight').forEach(el => {
+        el.classList.remove('error-highlight');
+    });
+}
+
+export function requestFullScreenMode() {
+    try {
+        const doc = window.document;
+        const docEl = doc.documentElement;
+        const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        
+        if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            if (requestFullScreen) {
+                const fsPromise = requestFullScreen.call(docEl);
+                if (fsPromise !== undefined) {
+                    fsPromise.catch(err => {
+                        console.warn("전체화면 모드를 지원하지 않거나 권한이 차단되었습니다:", err);
+                    });
+                }
+            }
+        }
+    } catch(e) {
+        console.log("Fullscreen API not supported or blocked", e);
+    }
+}
+
+export function showDocInfo(e, reqType) {
+    e.preventDefault();
+    e.stopPropagation(); 
+    
+    const visa = document.querySelector('input[name="visaType"]:checked').value;
+    const docList = docMatrix[visa]?.[reqType] || docMatrix[visa]?.['default'];
+    
+    let html = `<div class="mb-6 text-sm md:text-base font-extrabold text-white bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-900 flex justify-center items-center text-center break-keep">
+        <span><span class="text-yellow-400 mr-1.5">[${visa}]</span> ${reqNames[reqType]} 필수 서류</span>
+    </div>`;
+    
+    html += `<div class="space-y-3">`;
+    docList.forEach(doc => {
+        let badge = '';
+        let borderClass = '';
+        
+        const badgeBaseClass = "text-[11px] md:text-xs px-2.5 py-1.5 rounded-lg font-bold whitespace-nowrap shadow-sm inline-block";
+        
+        if (doc.type === 'auto') {
+            badge = `<span class="badge-auto bg-blue-100 text-blue-700 border border-blue-200 ${badgeBaseClass}">${i18nDict[window.currentLang]['badge_auto']}</span>`;
+            borderClass = 'border-blue-200 bg-blue-50/50';
+        } else if (doc.type === 'company') {
+            badge = `<span class="badge-company bg-emerald-100 text-emerald-700 border border-emerald-200 ${badgeBaseClass}">${i18nDict[window.currentLang]['badge_company']}</span>`;
+            borderClass = 'border-emerald-200 bg-emerald-50/30';
+        } else {
+            badge = `<span class="badge-personal bg-amber-100 text-amber-700 border border-amber-200 ${badgeBaseClass}">${i18nDict[window.currentLang]['badge_personal']}</span>`;
+            borderClass = 'border-amber-200 bg-amber-50/30';
+        }
+        
+        html += `<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border ${borderClass}">
+            <div class="text-sm md:text-base font-bold text-slate-700 leading-snug break-keep flex-1 doc-name-label" 
+                  data-kr="${doc.name.kr}" data-en="${doc.name.en}" data-vn="${doc.name.vn}">
+                ${doc.name[window.currentLang] || doc.name.kr}
+            </div>
+            <div class="shrink-0 text-left sm:text-right">${badge}</div>
+        </div>`;
+    });
+    html += `</div>`;
+    
+    document.getElementById('doc-info-content').innerHTML = html;
+    document.getElementById('doc-info-modal').classList.add('active');
+}
+
+export function closeDocInfo() {
+    document.getElementById('doc-info-modal').classList.remove('active');
+}
+
+}
+
+{
+type: uploaded file
+fileName: hdhyundai1/visa_helper/visa_helper-main/js/utils.js
+fullContent:
+import { CONFIG } from './config.js';
+
+export async function getCryptoKey(salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(salt.padEnd(32, '0').slice(0, 32)), { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+    return keyMaterial;
+}
+
+export async function encryptData(text) {
+    if (!text) return "";
+    try {
+        const key = await getCryptoKey(CONFIG.secretSalt);
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const encodedText = new TextEncoder().encode(text);
+        const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, encodedText);
+        
+        const combined = new Uint8Array(iv.length + ciphertext.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(ciphertext), iv.length);
+        return btoa(String.fromCharCode(...combined));
+    } catch(e) { return text; }
+}
+
+export async function decryptData(base64Cipher) {
+    if (!base64Cipher || !base64Cipher.startsWith) return base64Cipher;
+    try {
+        const binaryStr = atob(base64Cipher);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+        
+        const iv = bytes.slice(0, 12);
+        const data = bytes.slice(12);
+        const key = await getCryptoKey(CONFIG.secretSalt);
+        
+        const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
+        return new TextDecoder().decode(decrypted);
+    } catch(e) { return base64Cipher; } 
+}
+
+export async function fetchWithBackoff(url, payload) {
+    const delays = [1000, 2000, 4000, 8000, 16000];
+    for (let i = 0; i < delays.length + 1; i++) {
+        try {
+            const response = await fetch(url, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(payload) 
+            });
+            if (!response.ok) throw new Error(`HTTP 에러: ${response.status}`);
+            return await response.json();
+        } catch (e) {
+            if (i === delays.length) throw e;
+            await new Promise(r => setTimeout(r, delays[i]));
+        }
+    }
+}
+
+export function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64); 
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+}
+이전의 모듈 내보내기/불러오기(import/export) 과정에서 발생한 또 다른 연결 누락이 범인입니다!
+
+제공해주신 최신 `js/main.js`의 코드를 꼼꼼히 확인해 본 결과, `js/utils.js`에서 불러와야 할 `getCryptoKey`와 `encryptData`, `decryptData` 함수들이 **`js/main.js` 파일 내에서 전역 객체(`window`)에 연결되지 않고 누락**되어 있는 것을 발견했습니다.
+
+특히 `encryptData`와 `decryptData`는 클라우드 명부(`firebase.js`)에 데이터를 안전하게 저장하고 불러올 때 필수적으로 사용되는 암호화 함수들이라서, 이 연결이 빠지면 시스템 전체가 제대로 돌지 않게 됩니다.
+
+문제가 되는 `js/main.js` 파일에 해당 부분을 수정한 코드를 작성해 드립니다!
