@@ -12,7 +12,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
@@ -58,7 +57,6 @@
                 <div class="absolute top-1/2 left-8 right-8 h-[3px] bg-slate-200 -translate-y-1/2 z-0 rounded overflow-hidden">
                     <div class="absolute top-0 left-0 h-full bg-blue-600 rounded transition-all duration-500 ease-out" id="stepper-progress-line" style="width: 0%"></div>
                 </div>
-                
                 <button onclick="window.navigateStep(1)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-1">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">1</div>
                 </button>
@@ -197,16 +195,13 @@
                         <p class="text-sm text-slate-600 mb-8 leading-relaxed" data-i18n="s_excel_desc">
                             Step 1에서 선택한 <strong class="text-slate-800">기본 설정값</strong> 외에도<br>엑셀 칸을 클릭하면 V 체크 항목들을 목록(드롭다운)에서 선택할 수 있습니다.
                         </p>
-                        
                         <button onclick="window.downloadExcelTemplate()" class="w-full max-w-sm mx-auto py-4 bg-slate-100 text-slate-700 rounded-xl font-bold mb-4 hover:bg-slate-200 transition shadow-sm flex items-center justify-center text-base">
                             <i class="fa-solid fa-download mr-2"></i> <span data-i18n="btn_excel_down">표준 템플릿 다운로드</span>
                         </button>
-                        
                         <label class="block w-full max-w-sm mx-auto py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition cursor-pointer shadow-lg text-base transform hover:-translate-y-0.5 flex items-center justify-center">
                             <i class="fa-solid fa-upload mr-2"></i> <span data-i18n="btn_excel_up">작성된 엑셀 업로드 (생성 시작)</span>
                             <input type="file" accept=".xlsx, .xls" class="hidden" onchange="window.processExcelBatch(this)">
                         </label>
-                        
                         <div id="step-excel-progress" class="hidden mt-6 text-sm font-bold text-emerald-600 animate-pulse" data-i18n="msg_excel_prog">수십 명의 PDF를 압축 생성 중입니다. 잠시만 기다려주세요...</div>
                     </div>
                 </div>
@@ -222,7 +217,6 @@
                         <span class="text-blue-600 font-bold text-sm tracking-wider uppercase" data-i18n="s2_step">Step 2</span>
                         <h2 class="text-2xl font-extrabold text-slate-800 mt-1" data-i18n="s2_title">외국인 인적사항</h2>
                     </div>
-                    
                     <div class="flex gap-2">
                         <label class="cursor-pointer text-emerald-600 hover:text-white bg-emerald-50 hover:bg-emerald-600 border border-emerald-200 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
                             <i class="fa-solid fa-camera mr-1.5"></i> <span data-i18n="btn_camera">사진 촬영</span>
@@ -242,7 +236,6 @@
                     </div>
 
                     <div class="card-header text-blue-800"><i class="fa-regular fa-id-card mr-2"></i><span data-i18n="s2_sub1">기본 인적 정보</span></div>
-                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="form-label" data-i18n="l_surname">성 (Surname)</label>
@@ -287,7 +280,6 @@
                 
                 <div class="card-box bg-slate-50 border-slate-200">
                     <div class="card-header text-slate-700 border-slate-200"><i class="fa-solid fa-file-pen mr-2"></i><span data-i18n="s2_sub2">신청서 제출자</span></div>
-                    
                     <div class="flex flex-wrap gap-4 mb-4">
                         <label class="flex items-center cursor-pointer">
                             <input type="radio" name="submitter" value="self" checked onchange="window.handleModeChange()" class="custom-radio mr-2"> 
@@ -302,7 +294,6 @@
                             <span class="text-sm font-bold text-slate-600" data-i18n="sub_parents">부/모 (대리)</span>
                         </label>
                     </div>
-                    
                     <div id="wrap_family_proxy" class="grid grid-cols-1 sm:grid-cols-2 gap-4 hidden dynamic-wrap pt-2 border-t border-slate-200 mt-2">
                         <div id="wrap_spouse" class="hidden w-full sm:col-span-2">
                             <label class="form-label text-blue-700" data-i18n="l_spouse">배우자 성명 영문</label>
@@ -623,7 +614,8 @@
                 </div>
                 
                 <div id="checklist-container" class="card-box bg-slate-50/50">
-                    </div>
+                    <!-- 체크리스트 항목이 동적으로 생성됩니다 -->
+                </div>
 
                 <div id="final-success-msg" class="hidden bg-emerald-50 border-2 border-emerald-500 rounded-3xl p-6 md:p-8 text-center shadow-lg animate-pulse mb-6">
                     <i class="fa-solid fa-circle-check text-5xl text-emerald-500 mb-4"></i>
@@ -640,6 +632,7 @@
         </main>
     </div>
 
+    <!-- 모달 창들은 내용이 길어 생략 없이 위와 동일하게 유지 -->
     <div id="db-modal" class="modal z-[160]">
         <div class="bg-white p-6 rounded-3xl w-11/12 max-w-lg shadow-2xl flex flex-col max-h-[80vh]">
             <div class="flex items-center justify-between mb-4">
@@ -736,7 +729,6 @@
         </div>
     </div>
 
-    <!-- 필요 서류 안내 모달 -->
     <div id="doc-info-modal" class="modal z-[170]">
         <div class="bg-white p-6 rounded-3xl w-11/12 max-w-md shadow-2xl flex flex-col max-h-[80vh]">
             <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
@@ -750,8 +742,8 @@
         </div>
     </div>
 
-    <!-- 🔥 오직 main.js 단 하나만 type="module"로 로드합니다! (나머지는 main.js가 알아서 연결) -->
+    <!-- 🔥 핵심 수정: 오직 main.js 하나만 모듈로 불러옵니다! (main.js가 알아서 나머지 파일들을 다 가져옵니다) -->
     <script type="module" src="./js/main.js"></script>
-    
+
 </body>
 </html>
