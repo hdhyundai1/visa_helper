@@ -785,12 +785,3 @@ export function base64ToArrayBuffer(base64) {
     }
     return bytes.buffer;
 }
-
-}
-이전의 모듈 내보내기/불러오기(import/export) 과정에서 발생한 또 다른 연결 누락이 범인입니다!
-
-제공해주신 최신 `js/main.js`의 코드를 꼼꼼히 확인해 본 결과, `js/utils.js`에서 불러와야 할 `getCryptoKey`와 `encryptData`, `decryptData` 함수들이 **`js/main.js` 파일 내에서 전역 객체(`window`)에 연결되지 않고 누락**되어 있는 것을 발견했습니다.
-
-특히 `encryptData`와 `decryptData`는 클라우드 명부(`firebase.js`)에 데이터를 안전하게 저장하고 불러올 때 필수적으로 사용되는 암호화 함수들이라서, 이 연결이 빠지면 시스템 전체가 제대로 돌지 않게 됩니다.
-
-문제가 되는 `js/main.js` 파일에 해당 부분을 수정한 코드를 작성해 드립니다!
