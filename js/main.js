@@ -14,6 +14,10 @@ window.isBatchMode = false;
 window.currentLang = 'kr';
 window.uploadedImagesBase64 = [];
 
+// utils.js 관련 누락되었던 암호화 함수 연결 추가
+window.encryptData = encryptData;
+window.decryptData = decryptData;
+window.getCryptoKey = getCryptoKey;
 window.fetchWithBackoff = fetchWithBackoff;
 window.base64ToArrayBuffer = base64ToArrayBuffer;
 
