@@ -7,14 +7,12 @@ import { downloadExcelTemplate, processExcelBatch } from './excel.js';
 import { runIDOCR, previewFiles, removePreviewFile, clearPreviewFiles, runAIVerification } from './ai.js';
 import { saveToEmployeeDB, renderDBList, loadEmployeeData, deleteEmployee } from './firebase.js';
 
-// HTML 내부에 인라인(inline)으로 바인딩된 이벤트 속성(onclick, onchange 등)에서 
-// 호출할 수 있도록 모듈의 기능들을 브라우저 전역 객체(window)에 매핑합니다.
+// HTML의 onclick 등에서 함수를 사용할 수 있도록 window 객체에 모두 매핑합니다.
 window.apiKey = CONFIG.apiKey;
 window.isBatchMode = false;
 window.currentLang = 'kr';
 window.uploadedImagesBase64 = [];
 
-// utils.js 관련 누락되었던 암호화 함수 연결 추가
 window.encryptData = encryptData;
 window.decryptData = decryptData;
 window.getCryptoKey = getCryptoKey;
@@ -72,31 +70,21 @@ window.renderDBList = renderDBList;
 window.loadEmployeeData = loadEmployeeData;
 window.deleteEmployee = deleteEmployee;
 
-// DOM이 로드되었을 때 앱 초기 설정 진행 (안전한 로드 방식 적용)
+// DOM 로드 시 초기화 보장
 function initApp() {
-    // 고급 달력 선택기 라이브러리(Flatpickr) 활성화
     if (window.flatpickr) {
-        flatpickr(".datepicker-input", {
-            locale: "ko",              
-            dateFormat: "Y-m-d",       
-            allowInput: true,          
-            disableMobile: "true"      
-        });
+        flatpickr(".datepicker-input", { locale: "ko", dateFormat: "Y-m-d", allowInput: true, disableMobile: "true" });
     }
-    
-    // 이전에 입력 중이던 데이터 복원 및 UI 세팅
-    loadFormData(); 
-    updateTemplateStatusUI(); 
-    handleModeChange(); 
+    loadFormData();
+    updateTemplateStatusUI();
+    handleModeChange();
 }
 
-// 모듈 스크립트 특성상 늦게 로드되어도 초기화가 무조건 실행되도록 보장
 if (document.readyState === 'loading') {
     document.addEventListener("DOMContentLoaded", initApp);
 } else {
     initApp();
 }
 
-// 타이핑 중 자동 저장, 번호 하이픈 자동 삽입 등의 공통 입력 이벤트 리스너 바인딩
 document.addEventListener('input', handleInputEvents);
 document.addEventListener('change', handleChangeEvents);
