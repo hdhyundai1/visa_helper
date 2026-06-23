@@ -7,7 +7,7 @@ import { downloadExcelTemplate, processExcelBatch } from './excel.js';
 import { runIDOCR, previewFiles, removePreviewFile, clearPreviewFiles, runAIVerification } from './ai.js';
 import { saveToEmployeeDB, renderDBList, loadEmployeeData, deleteEmployee } from './firebase.js';
 
-// HTML의 onclick 등에서 함수를 사용할 수 있도록 window 객체에 모두 매핑합니다.
+// Global assignments
 window.apiKey = CONFIG.apiKey;
 window.isBatchMode = false;
 window.currentLang = 'kr';
@@ -70,14 +70,13 @@ window.renderDBList = renderDBList;
 window.loadEmployeeData = loadEmployeeData;
 window.deleteEmployee = deleteEmployee;
 
-// DOM 로드 시 초기화 보장
 function initApp() {
     if (window.flatpickr) {
         flatpickr(".datepicker-input", { locale: "ko", dateFormat: "Y-m-d", allowInput: true, disableMobile: "true" });
     }
-    loadFormData();
-    updateTemplateStatusUI();
-    handleModeChange();
+    if(window.loadFormData) window.loadFormData();
+    if(window.updateTemplateStatusUI) window.updateTemplateStatusUI();
+    if(window.handleModeChange) window.handleModeChange();
 }
 
 if (document.readyState === 'loading') {
