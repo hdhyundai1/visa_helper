@@ -1,3 +1,4 @@
+// js/config.js
 export const CONFIG = {
     apiKey: "AQ.Ab8RN6KCILCKQYf1mqY27b22HzVpjHDDvKeOL1fcAblbQPw3dA",
     secretSalt: "HD_SAMHO_SECURE_KEY_2026_!@#",
@@ -10,6 +11,95 @@ export const CONFIG = {
         appId: "1:635228928760:web:5293bd988de4bfa1c9590d"
     },
     appId: 'visa-app'
+};
+
+export const reqNames = {
+    'chk_alien_reg': '외국인 등록', 
+    'chk_extension': '체류기간 연장허가', 
+    'chk_change_work': '근무처 변경/추가',
+    'chk_reentry': '재입국허가', 
+    'chk_reissue': '등록증 재발급', 
+    'chk_change_status': '체류자격 변경'
+};
+
+export const docMatrix = {
+    'E-9': {
+        'chk_alien_reg': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
+            { name: { kr: '여권 원본', en: 'Original Passport', vn: 'Hộ chiếu gốc' }, type: 'personal' },
+            { name: { kr: '표준규격사진 1매', en: '1 Standard Photo', vn: '1 Ảnh tiêu chuẩn' }, type: 'personal' },
+            { name: { kr: '마약검사확인서', en: 'Drug Test Certificate', vn: 'Giấy khám ma túy' }, type: 'personal' },
+            { name: { kr: '사업자 등록증 사본', en: 'Business Registration Certificate', vn: 'Giấy phép kinh doanh' }, type: 'company' },
+            { name: { kr: '고용허가서 사본', en: 'Copy of Employment Permit', vn: 'Bản sao Giấy phép LĐ' }, type: 'company' },
+            { name: { kr: '표준근로계약서 사본', en: 'Copy of Standard Labor Contract', vn: 'Bản sao Hợp đồng LĐ' }, type: 'company' }
+        ],
+        'chk_extension': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
+            { name: { kr: '여권', en: 'Passport', vn: 'Hộ chiếu' }, type: 'personal' },
+            { name: { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' },
+            { name: { kr: '고용허가서 사본', en: 'Copy of Employment Permit', vn: 'Bản sao Giấy phép LĐ' }, type: 'company' },
+            { name: { kr: '표준근로계약서 사본', en: 'Copy of Standard Labor Contract', vn: 'Bản sao Hợp đồng LĐ' }, type: 'company' },
+            { name: { kr: '사업자 등록증 사본', en: 'Business Registration Certificate', vn: 'Giấy phép kinh doanh' }, type: 'company' }
+        ],
+        'chk_change_work': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
+            { name: { kr: '여권', en: 'Passport', vn: 'Hộ chiếu' }, type: 'personal' },
+            { name: { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' },
+            { name: { kr: '고용허가서 사본', en: 'Copy of Employment Permit', vn: 'Bản sao Giấy phép LĐ' }, type: 'company' },
+            { name: { kr: '표준근로계약서 사본', en: 'Copy of Standard Labor Contract', vn: 'Bản sao Hợp đồng LĐ' }, type: 'company' },
+            { name: { kr: '사업자 등록증 사본', en: 'Business Registration Certificate', vn: 'Giấy phép kinh doanh' }, type: 'company' }
+        ],
+        'chk_reentry': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '여권', en: 'Passport', vn: 'Hộ chiếu' }, type: 'personal' },
+            { name: { kr: '외국인등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' }
+        ],
+        'default': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' }
+        ]
+    },
+    'E-7': {
+        'chk_extension': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '신원보증서', en: 'Original Guarantee Form', vn: 'Bản gốc Giấy bảo lãnh' }, type: 'auto' },
+            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
+            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' },
+            { name: { kr: '개인 소득금액 증명', en: 'Proof of Personal Income', vn: 'Chứng minh thu nhập cá nhân' }, type: 'personal' },
+            { name: { kr: '고용계약서', en: 'Employment Contract', vn: 'Hợp đồng lao động' }, type: 'company' },
+            { name: { kr: '사업장 등록증 사본', en: 'Business/Corporate Registration', vn: 'Giấy phép KD' }, type: 'company' },
+            { name: { kr: '고용주 납세증명서 등', en: 'Employer Tax Certificates', vn: 'Chứng nhận nộp thuế' }, type: 'company' }
+        ],
+        'chk_change_work': [
+            { name: { kr: '통합신청서', en: 'Integrated Application Form', vn: 'Đơn xin tổng hợp' }, type: 'auto' },
+            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' },
+            { name: { kr: '고용추천서', en: 'Employment Recommendation', vn: 'Thư giới thiệu việc làm' }, type: 'company' },
+            { name: { kr: '고용계약서', en: 'Employment Contract', vn: 'Hợp đồng lao động' }, type: 'company' },
+            { name: { kr: '사업자등록증', en: 'Business Registration', vn: 'Giấy phép kinh doanh' }, type: 'company' }
+        ],
+        'chk_reentry': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '여권 원본', en: 'Original Passport', vn: 'Hộ chiếu gốc' }, type: 'personal' },
+            { name: { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' },
+            { name: { kr: '수수료', en: 'Processing Fee', vn: 'Lệ phí' }, type: 'personal' }
+        ],
+        'chk_change_status': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '신원보증서', en: 'Original Guarantee Form', vn: 'Bản gốc Giấy bảo lãnh' }, type: 'auto' },
+            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
+            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' },
+            { name: { kr: '개인 소득금액 증명', en: 'Proof of Personal Income', vn: 'Chứng minh thu nhập cá nhân' }, type: 'personal' },
+            { name: { kr: '자격 요건 입증 서류', en: 'Proof of Qualifications', vn: 'Giấy tờ chứng minh trình độ' }, type: 'personal' },
+            { name: { kr: '고용계약서 및 사업자등록증', en: 'Contract & Business Registration', vn: 'Hợp đồng LĐ & GPKD' }, type: 'company' }
+        ],
+        'default': [
+            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
+            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' }
+        ]
+    }
 };
 
 export const i18nDict = {
@@ -400,94 +490,5 @@ export const i18nDict = {
         'badge_auto': 'Hệ thống tự động tạo',
         'badge_company': 'Công ty cấp',
         'badge_personal': 'Cá nhân chuẩn bị'
-    }
-};
-
-export const reqNames = {
-    'chk_alien_reg': '외국인 등록', 
-    'chk_extension': '체류기간 연장허가', 
-    'chk_change_work': '근무처 변경/추가',
-    'chk_reentry': '재입국허가', 
-    'chk_reissue': '등록증 재발급', 
-    'chk_change_status': '체류자격 변경'
-};
-
-export const docMatrix = {
-    'E-9': {
-        'chk_alien_reg': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
-            { name: { kr: '여권 원본', en: 'Original Passport', vn: 'Hộ chiếu gốc' }, type: 'personal' },
-            { name: { kr: '표준규격사진 1매', en: '1 Standard Photo', vn: '1 Ảnh tiêu chuẩn' }, type: 'personal' },
-            { name: { kr: '마약검사확인서', en: 'Drug Test Certificate', vn: 'Giấy khám ma túy' }, type: 'personal' },
-            { name: { kr: '사업자 등록증 사본', en: 'Business Registration Certificate', vn: 'Giấy phép kinh doanh' }, type: 'company' },
-            { name: { kr: '고용허가서 사본', en: 'Copy of Employment Permit', vn: 'Bản sao Giấy phép LĐ' }, type: 'company' },
-            { name: { kr: '표준근로계약서 사본', en: 'Copy of Standard Labor Contract', vn: 'Bản sao Hợp đồng LĐ' }, type: 'company' }
-        ],
-        'chk_extension': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
-            { name: { kr: '여권', en: 'Passport', vn: 'Hộ chiếu' }, type: 'personal' },
-            { name: { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' },
-            { name: { kr: '고용허가서 사본', en: 'Copy of Employment Permit', vn: 'Bản sao Giấy phép LĐ' }, type: 'company' },
-            { name: { kr: '표준근로계약서 사본', en: 'Copy of Standard Labor Contract', vn: 'Bản sao Hợp đồng LĐ' }, type: 'company' },
-            { name: { kr: '사업자 등록증 사본', en: 'Business Registration Certificate', vn: 'Giấy phép kinh doanh' }, type: 'company' }
-        ],
-        'chk_change_work': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
-            { name: { kr: '여권', en: 'Passport', vn: 'Hộ chiếu' }, type: 'personal' },
-            { name: { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' },
-            { name: { kr: '고용허가서 사본', en: 'Copy of Employment Permit', vn: 'Bản sao Giấy phép LĐ' }, type: 'company' },
-            { name: { kr: '표준근로계약서 사본', en: 'Copy of Standard Labor Contract', vn: 'Bản sao Hợp đồng LĐ' }, type: 'company' },
-            { name: { kr: '사업자 등록증 사본', en: 'Business Registration Certificate', vn: 'Giấy phép kinh doanh' }, type: 'company' }
-        ],
-        'chk_reentry': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '여권', en: 'Passport', vn: 'Hộ chiếu' }, type: 'personal' },
-            { name: { kr: '외국인등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' }
-        ],
-        'default': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' }
-        ]
-    },
-    'E-7': {
-        'chk_extension': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '신원보증서', en: 'Original Guarantee Form', vn: 'Bản gốc Giấy bảo lãnh' }, type: 'auto' },
-            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
-            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' },
-            { name: { kr: '개인 소득금액 증명', en: 'Proof of Personal Income', vn: 'Chứng minh thu nhập cá nhân' }, type: 'personal' },
-            { name: { kr: '고용계약서', en: 'Employment Contract', vn: 'Hợp đồng lao động' }, type: 'company' },
-            { name: { kr: '사업장 등록증 사본', en: 'Business/Corporate Registration', vn: 'Giấy phép KD' }, type: 'company' },
-            { name: { kr: '고용주 납세증명서 등', en: 'Employer Tax Certificates', vn: 'Chứng nhận nộp thuế' }, type: 'company' }
-        ],
-        'chk_change_work': [
-            { name: { kr: '통합신청서', en: 'Integrated Application Form', vn: 'Đơn xin tổng hợp' }, type: 'auto' },
-            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' },
-            { name: { kr: '고용추천서', en: 'Employment Recommendation', vn: 'Thư giới thiệu việc làm' }, type: 'company' },
-            { name: { kr: '고용계약서', en: 'Employment Contract', vn: 'Hợp đồng lao động' }, type: 'company' },
-            { name: { kr: '사업자등록증', en: 'Business Registration', vn: 'Giấy phép kinh doanh' }, type: 'company' }
-        ],
-        'chk_reentry': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '여권 원본', en: 'Original Passport', vn: 'Hộ chiếu gốc' }, type: 'personal' },
-            { name: { kr: '외국인 등록증', en: 'Alien Registration Card (ARC)', vn: 'Thẻ cư trú (ARC)' }, type: 'personal' },
-            { name: { kr: '수수료', en: 'Processing Fee', vn: 'Lệ phí' }, type: 'personal' }
-        ],
-        'chk_change_status': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '신원보증서', en: 'Original Guarantee Form', vn: 'Bản gốc Giấy bảo lãnh' }, type: 'auto' },
-            { name: { kr: '거주/숙소제공 확인서', en: 'Proof of Residence Form', vn: 'Giấy chứng minh nơi ở' }, type: 'auto' },
-            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' },
-            { name: { kr: '개인 소득금액 증명', en: 'Proof of Personal Income', vn: 'Chứng minh thu nhập cá nhân' }, type: 'personal' },
-            { name: { kr: '자격 요건 입증 서류', en: 'Proof of Qualifications', vn: 'Giấy tờ chứng minh trình độ' }, type: 'personal' },
-            { name: { kr: '고용계약서 및 사업자등록증', en: 'Contract & Business Registration', vn: 'Hợp đồng LĐ & GPKD' }, type: 'company' }
-        ],
-        'default': [
-            { name: { kr: '통합신청서', en: 'Application Form', vn: 'Đơn đăng ký' }, type: 'auto' },
-            { name: { kr: '여권 및 외국인 등록증', en: 'Passport & ARC', vn: 'Hộ chiếu & Thẻ cư trú' }, type: 'personal' }
-        ]
     }
 };
