@@ -14,11 +14,9 @@ window.isBatchMode = false;
 window.currentLang = 'kr';
 window.uploadedImagesBase64 = [];
 
-// 유틸리티
 window.fetchWithBackoff = fetchWithBackoff;
 window.base64ToArrayBuffer = base64ToArrayBuffer;
 
-// UI 제어 함수
 window.changeLanguage = changeLanguage;
 window.openDBModal = openDBModal;
 window.closeDBModal = closeDBModal;
@@ -35,7 +33,6 @@ window.requestFullScreenMode = requestFullScreenMode;
 window.showDocInfo = showDocInfo;
 window.closeDocInfo = closeDocInfo;
 
-// 폼 제어 및 진행 단계 함수
 window.startSingleProcess = startSingleProcess;
 window.startBatchProcess = startBatchProcess;
 window.proceedFromStep1 = proceedFromStep1;
@@ -50,7 +47,6 @@ window.prepareGenerate = prepareGenerate;
 window.saveFormData = saveFormData;
 window.loadFormData = loadFormData;
 
-// PDF 서류 생성
 window.createSingleDoc = createSingleDoc;
 window.generateSelectedPDFs = generateSelectedPDFs;
 window.uploadSpecificTemplate = uploadSpecificTemplate;
@@ -58,25 +54,22 @@ window.updateTemplateStatusUI = updateTemplateStatusUI;
 window.renderChecklist = renderChecklist;
 window.checkFinalSuccess = checkFinalSuccess;
 
-// 엑셀 일괄 처리
 window.downloadExcelTemplate = downloadExcelTemplate;
 window.processExcelBatch = processExcelBatch;
 
-// AI 검증 및 OCR
 window.runIDOCR = runIDOCR;
 window.previewFiles = previewFiles;
 window.removePreviewFile = removePreviewFile;
 window.clearPreviewFiles = clearPreviewFiles;
 window.runAIVerification = runAIVerification;
 
-// Firebase 클라우드 DB 연동
 window.saveToEmployeeDB = saveToEmployeeDB;
 window.renderDBList = renderDBList;
 window.loadEmployeeData = loadEmployeeData;
 window.deleteEmployee = deleteEmployee;
 
-// DOM이 로드되었을 때 앱 초기 설정 진행
-document.addEventListener("DOMContentLoaded", function() {
+// DOM이 로드되었을 때 앱 초기 설정 진행 (안전한 로드 방식 적용)
+function initApp() {
     // 고급 달력 선택기 라이브러리(Flatpickr) 활성화
     if (window.flatpickr) {
         flatpickr(".datepicker-input", {
@@ -91,7 +84,14 @@ document.addEventListener("DOMContentLoaded", function() {
     loadFormData(); 
     updateTemplateStatusUI(); 
     handleModeChange(); 
-});
+}
+
+// 모듈 스크립트 특성상 늦게 로드되어도 초기화가 무조건 실행되도록 보장
+if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    initApp();
+}
 
 // 타이핑 중 자동 저장, 번호 하이픈 자동 삽입 등의 공통 입력 이벤트 리스너 바인딩
 document.addEventListener('input', handleInputEvents);
