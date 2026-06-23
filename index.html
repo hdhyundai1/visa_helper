@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 모바일 앱 라이크(App-like) 메타 태그 추가 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,23 +10,19 @@
     <meta name="theme-color" content="#0f172a">
     <title>HD현대삼호 비자지원</title>
     
-    <!-- CSS & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Flatpickr (고급 날짜 선택기) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
-    <!-- PDF & Excel Utils -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/@pdf-lib/fontkit/dist/fontkit.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-    <!-- 분리된 CSS 불러오기 -->
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body class="text-slate-800 flex flex-col justify-center items-center min-h-screen bg-[#f1f5f9] md:p-6 lg:p-10">
@@ -36,7 +31,7 @@
         
         <header class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 sticky top-0 z-10 flex justify-between items-center shadow-lg">
             <div class="flex items-center gap-2 md:gap-3">
-                <button onclick="goHome()" class="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition flex items-center" title="홈">
+                <button onclick="window.goHome()" class="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition flex items-center" title="홈">
                     <i class="fa-solid fa-house"></i>
                 </button>
                 <select id="lang-selector" onchange="window.changeLanguage(this.value)" class="bg-slate-700 border border-slate-600 text-white text-xs font-bold rounded-lg px-2 py-2 outline-none cursor-pointer">
@@ -49,10 +44,10 @@
             <h1 class="text-sm md:text-base font-extrabold tracking-tight text-slate-200">HD현대삼호 비자지원</h1>
             
             <div class="flex gap-2">
-                <button onclick="openDBModal()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-md text-xs font-bold transition flex items-center">
+                <button onclick="window.openDBModal()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-md text-xs font-bold transition flex items-center">
                     <i class="fa-solid fa-users md:mr-1"></i> <span class="hidden md:inline" data-i18n="btn_db">클라우드 명부</span>
                 </button>
-                <button onclick="openAdminModal()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl shadow-md text-xs font-bold transition flex items-center">
+                <button onclick="window.openAdminModal()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl shadow-md text-xs font-bold transition flex items-center">
                     <i class="fa-solid fa-sliders md:mr-1"></i> <span class="hidden md:inline" data-i18n="btn_settings">설정</span>
                 </button>
             </div>
@@ -64,25 +59,25 @@
                     <div class="absolute top-0 left-0 h-full bg-blue-600 rounded transition-all duration-500 ease-out" id="stepper-progress-line" style="width: 0%"></div>
                 </div>
                 
-                <button onclick="navigateStep(1)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-1">
+                <button onclick="window.navigateStep(1)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-1">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">1</div>
                 </button>
-                <button onclick="navigateStep(2)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-2">
+                <button onclick="window.navigateStep(2)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-2">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">2</div>
                 </button>
-                <button onclick="navigateStep(3)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-3">
+                <button onclick="window.navigateStep(3)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-3">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">3</div>
                 </button>
-                <button onclick="navigateStep(4)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-4">
+                <button onclick="window.navigateStep(4)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-4">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">4</div>
                 </button>
-                <button onclick="navigateStep(5)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-5">
+                <button onclick="window.navigateStep(5)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-5">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">5</div>
                 </button>
-                <button onclick="navigateStep(6)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-6">
+                <button onclick="window.navigateStep(6)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-6">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">6</div>
                 </button>
-                <button onclick="navigateStep(7)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-7">
+                <button onclick="window.navigateStep(7)" class="step-btn relative z-10 flex flex-col items-center gap-1 group" id="stepper-btn-7">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 bg-slate-100 text-slate-400 border-2 border-white ring-1 ring-slate-200 shadow-sm step-circle">7</div>
                 </button>
             </div>
@@ -101,10 +96,10 @@
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-3 w-full max-w-lg mx-auto">
-                        <button onclick="startSingleProcess()" class="flex-1 bg-slate-900 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
+                        <button onclick="window.startSingleProcess()" class="flex-1 bg-slate-900 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
                             <i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> <span data-i18n="home_start">개인 신청(1인 접수)</span>
                         </button>
-                        <button onclick="startBatchProcess()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
+                        <button onclick="window.startBatchProcess()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
                             <i class="fa-solid fa-file-excel mr-2"></i> <span data-i18n="home_excel">관리자 신청(다수 접수)</span>
                         </button>
                     </div>
@@ -186,7 +181,7 @@
                 </div>
                 
                 <div class="mt-8">
-                    <button id="btn-next-step1" onclick="proceedFromStep1()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_next_step">다음 단계 진행하기</button>
+                    <button id="btn-next-step1" onclick="window.proceedFromStep1()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_next_step">다음 단계 진행하기</button>
                 </div>
             </div>
 
@@ -203,13 +198,13 @@
                             Step 1에서 선택한 <strong class="text-slate-800">기본 설정값</strong> 외에도<br>엑셀 칸을 클릭하면 V 체크 항목들을 목록(드롭다운)에서 선택할 수 있습니다.
                         </p>
                         
-                        <button onclick="downloadExcelTemplate()" class="w-full max-w-sm mx-auto py-4 bg-slate-100 text-slate-700 rounded-xl font-bold mb-4 hover:bg-slate-200 transition shadow-sm flex items-center justify-center text-base">
+                        <button onclick="window.downloadExcelTemplate()" class="w-full max-w-sm mx-auto py-4 bg-slate-100 text-slate-700 rounded-xl font-bold mb-4 hover:bg-slate-200 transition shadow-sm flex items-center justify-center text-base">
                             <i class="fa-solid fa-download mr-2"></i> <span data-i18n="btn_excel_down">표준 템플릿 다운로드</span>
                         </button>
                         
                         <label class="block w-full max-w-sm mx-auto py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition cursor-pointer shadow-lg text-base transform hover:-translate-y-0.5 flex items-center justify-center">
                             <i class="fa-solid fa-upload mr-2"></i> <span data-i18n="btn_excel_up">작성된 엑셀 업로드 (생성 시작)</span>
-                            <input type="file" accept=".xlsx, .xls" class="hidden" onchange="processExcelBatch(this)">
+                            <input type="file" accept=".xlsx, .xls" class="hidden" onchange="window.processExcelBatch(this)">
                         </label>
                         
                         <div id="step-excel-progress" class="hidden mt-6 text-sm font-bold text-emerald-600 animate-pulse" data-i18n="msg_excel_prog">수십 명의 PDF를 압축 생성 중입니다. 잠시만 기다려주세요...</div>
@@ -217,7 +212,7 @@
                 </div>
 
                 <div class="mt-8 flex gap-3">
-                    <button onclick="prevStep(1)" class="w-full bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전 단계로</button>
+                    <button onclick="window.prevStep(1)" class="w-full bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전 단계로</button>
                 </div>
             </div>
 
@@ -321,8 +316,8 @@
                 </div>
                 
                 <div class="mt-6 flex gap-3">
-                    <button onclick="prevStep(1)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
-                    <button onclick="window.saveToEmployeeDB(); nextStep(3);" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition" data-i18n="btn_next">다음 단계</button>
+                    <button onclick="window.prevStep(1)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.saveToEmployeeDB(); window.nextStep(3);" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition" data-i18n="btn_next">다음 단계</button>
                 </div>
             </div>
 
@@ -369,8 +364,8 @@
                 </div>
                 
                 <div class="mt-8 flex gap-3">
-                    <button onclick="prevStep(2)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
-                    <button onclick="window.saveToEmployeeDB(); nextStep(4);" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition" data-i18n="btn_next">다음 단계</button>
+                    <button onclick="window.prevStep(2)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.saveToEmployeeDB(); window.nextStep(4);" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition" data-i18n="btn_next">다음 단계</button>
                 </div>
             </div>
 
@@ -513,8 +508,8 @@
                 </div>
                 
                 <div class="mt-8 flex gap-3">
-                    <button onclick="prevStep(3)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
-                    <button onclick="window.saveToEmployeeDB(); nextStep(5);" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center transition text-base">
+                    <button onclick="window.prevStep(3)" class="w-1/3 bg-white border-2 border-slate-200 font-bold py-3.5 rounded-xl text-slate-600 hover:bg-slate-50 transition" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.saveToEmployeeDB(); window.nextStep(5);" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center transition text-base">
                         <i class="fa-solid fa-robot text-yellow-400 mr-2"></i> <span data-i18n="btn_to_ai">AI 검증 단계로</span>
                     </button>
                 </div>
@@ -569,10 +564,10 @@
                         <i class="fa-solid fa-magnifying-glass-chart mr-2"></i> <span id="btn_verify_text" data-i18n="btn_verify">서류 교차 검증 시작</span>
                     </button>
                     <div class="flex gap-3 mt-2">
-                        <button onclick="prevStep(4)" class="w-1/4 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-3.5 rounded-xl transition text-sm sm:text-base">
+                        <button onclick="window.prevStep(4)" class="w-1/4 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-3.5 rounded-xl transition text-sm sm:text-base">
                             <span data-i18n="btn_prev">이전</span>
                         </button>
-                        <button onclick="editInfo()" class="w-1/4 bg-rose-50 border-2 border-rose-200 text-rose-600 hover:bg-rose-100 font-bold py-3.5 rounded-xl transition flex items-center justify-center text-sm sm:text-base">
+                        <button onclick="window.editInfo()" class="w-1/4 bg-rose-50 border-2 border-rose-200 text-rose-600 hover:bg-rose-100 font-bold py-3.5 rounded-xl transition flex items-center justify-center text-sm sm:text-base">
                             <i class="fa-solid fa-pen sm:mr-1"></i><span class="hidden sm:inline" data-i18n="btn_edit">입력 수정</span>
                         </button>
                         <button onclick="window.prepareGenerate()" class="w-2/4 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow flex items-center justify-center transition text-sm sm:text-base">
@@ -609,12 +604,12 @@
                 
                 <div class="mt-8 flex flex-col gap-3">
                     <div class="flex gap-3">
-                        <button onclick="prevStep(5)" class="w-1/3 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전</button>
+                        <button onclick="window.prevStep(5)" class="w-1/3 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전</button>
                         <button id="btn-generate-all" onclick="window.generateSelectedPDFs()" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base flex justify-center items-center">
                             <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-300"></i> <span data-i18n="btn_generate">선택된 서류 일괄 생성</span>
                         </button>
                     </div>
-                    <button onclick="window.renderChecklist(); nextStep(7);" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_to_step7">다음 단계 (최종 제출 점검)</button>
+                    <button onclick="window.renderChecklist(); window.nextStep(7);" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_to_step7">다음 단계 (최종 제출 점검)</button>
                 </div>
                 
                 <div id="download-zone" class="hidden w-full flex flex-col gap-3 mt-6"></div>
@@ -628,8 +623,7 @@
                 </div>
                 
                 <div id="checklist-container" class="card-box bg-slate-50/50">
-                    <!-- 체크리스트 항목이 동적으로 생성됩니다 -->
-                </div>
+                    </div>
 
                 <div id="final-success-msg" class="hidden bg-emerald-50 border-2 border-emerald-500 rounded-3xl p-6 md:p-8 text-center shadow-lg animate-pulse mb-6">
                     <i class="fa-solid fa-circle-check text-5xl text-emerald-500 mb-4"></i>
@@ -638,20 +632,19 @@
                 </div>
 
                 <div class="mt-4 flex gap-3">
-                    <button onclick="prevStep(6)" class="w-1/3 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전</button>
-                    <button onclick="goHome()" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_home">처음으로 돌아가기</button>
+                    <button onclick="window.prevStep(6)" class="w-1/3 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-4 rounded-xl transition text-base" data-i18n="btn_prev">이전</button>
+                    <button onclick="window.goHome()" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition text-base" data-i18n="btn_home">처음으로 돌아가기</button>
                 </div>
             </div>
 
         </main>
     </div>
 
-    <!-- 모달들 -->
     <div id="db-modal" class="modal z-[160]">
         <div class="bg-white p-6 rounded-3xl w-11/12 max-w-lg shadow-2xl flex flex-col max-h-[80vh]">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center"><i class="fa-solid fa-cloud text-blue-600 mr-2"></i><span data-i18n="btn_db">클라우드 명부</span></h3>
-                <button onclick="closeDBModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="window.closeDBModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <p class="text-xs text-slate-500 mb-4 bg-slate-50 p-2 rounded border border-slate-100">
                 <i class="fa-solid fa-lock text-emerald-500 mr-1"></i> 데이터가 클라우드(Firestore)에 안전하게 암호화되어 저장됩니다.
@@ -678,7 +671,7 @@
                 <input type="file" accept=".xlsx, .xls" class="hidden" onchange="window.processExcelBatch(this)">
             </label>
             <div id="step-excel-progress" class="hidden mt-4 text-xs font-bold text-emerald-600 animate-pulse" data-i18n="msg_excel_prog">수십 명의 PDF를 압축 생성 중입니다...</div>
-            <button onclick="closeExcelModal()" class="mt-4 text-slate-400 text-xs underline">닫기</button>
+            <button onclick="window.closeExcelModal()" class="mt-4 text-slate-400 text-xs underline">닫기</button>
         </div>
     </div>
 
@@ -686,7 +679,7 @@
         <div class="bg-white p-6 rounded-3xl w-11/12 max-w-sm shadow-2xl">
             <div class="flex items-center justify-between mb-2">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center"><i class="fa-solid fa-folder-gear text-blue-600 mr-2"></i><span data-i18n="btn_settings">설정</span></h3>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="window.closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <p class="text-[11px] text-slate-500 mb-5 pb-3 border-b border-slate-100">각 서류의 빈 PDF 양식을 기기에 등록합니다.</p>
             
@@ -716,7 +709,7 @@
                     <label for="file-guarantee" class="bg-white border-2 border-indigo-600 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer hover:bg-indigo-50">등록</label>
                 </div>
             </div>
-            <button onclick="closeAdminModal()" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold shadow-lg">설정 완료</button>
+            <button onclick="window.closeAdminModal()" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold shadow-lg">설정 완료</button>
         </div>
     </div>
 
@@ -725,7 +718,7 @@
             <div id="msg-icon" class="mb-4"></div>
             <h3 id="msg-title" class="text-xl font-extrabold mb-2 text-slate-800">알림</h3>
             <p id="msg-desc" class="text-sm text-slate-500 mb-6 whitespace-pre-wrap"></p>
-            <button onclick="closeMsg()" class="w-full py-3.5 bg-blue-600 text-white rounded-xl font-bold">확인</button>
+            <button onclick="window.closeMsg()" class="w-full py-3.5 bg-blue-600 text-white rounded-xl font-bold">확인</button>
         </div>
     </div>
     
@@ -756,7 +749,7 @@
         </div>
     </div>
 
-    <!-- 통합된 모듈 스크립트 불러오기 -->
     <script type="module" src="./js/main.js"></script>
+    
 </body>
 </html>
